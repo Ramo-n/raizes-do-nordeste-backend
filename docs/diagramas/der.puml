@@ -1,0 +1,131 @@
+@startuml der
+title DER — Rede Raízes do Nordeste
+hide circle
+skinparam linetype ortho
+
+entity "UNIDADE" as unidade {
+  * id : BIGINT <<PK>>
+  --
+  * nome : VARCHAR
+  * cidade : VARCHAR
+  * regiao : VARCHAR
+  * tipo_cozinha : VARCHAR
+  horario_funcionamento : VARCHAR
+  * ativa : BOOLEAN
+}
+
+entity "PRODUTO" as produto {
+  * id : BIGINT <<PK>>
+  --
+  * nome : VARCHAR
+  descricao : VARCHAR
+  * categoria : VARCHAR
+}
+
+entity "PRODUTO_UNIDADE" as pu {
+  * id : BIGINT <<PK>>
+  --
+  * produto_id : BIGINT <<FK>>
+  * unidade_id : BIGINT <<FK>>
+  * preco : DECIMAL(10,2)
+  * disponivel : BOOLEAN
+  * sazonal : BOOLEAN
+  mes_inicio_sazonalidade : INT
+  mes_fim_sazonalidade : INT
+  variacao_regional : VARCHAR
+}
+
+entity "ESTOQUE_ITEM" as estoque {
+  * id : BIGINT <<PK>>
+  --
+  * unidade_id : BIGINT <<FK>>
+  * produto_id : BIGINT <<FK>>
+  * quantidade : INT
+  * quantidade_minima : INT
+}
+
+entity "CLIENTE" as cliente {
+  * id : BIGINT <<PK>>
+  --
+  * nome : VARCHAR
+  * email : VARCHAR <<UK>>
+  data_nascimento : DATE
+  * consentimento_lgpd : BOOLEAN
+  data_consentimento : TIMESTAMP
+  * anonimizado : BOOLEAN
+}
+
+entity "CONTA_FIDELIDADE" as fidelidade {
+  * id : BIGINT <<PK>>
+  --
+  * cliente_id : BIGINT <<FK,UK>>
+  * pontos : INT
+}
+
+entity "PEDIDO" as pedido {
+  * id : BIGINT <<PK>>
+  --
+  * unidade_id : BIGINT <<FK>>
+  cliente_id : BIGINT <<FK, nullable>>
+  * canal : VARCHAR
+  * status : VARCHAR
+  * data_hora : TIMESTAMP
+  * valor_bruto : DECIMAL(10,2)
+  * desconto : DECIMAL(10,2)
+  * valor_total : DECIMAL(10,2)
+}
+
+entity "ITEM_PEDIDO" as item {
+  * id : BIGINT <<PK>>
+  --
+  * pedido_id : BIGINT <<FK>>
+  * produto_id : BIGINT <<FK>>
+  * quantidade : INT
+  * preco_unitario : DECIMAL(10,2)
+}
+
+entity "PAGAMENTO" as pagamento {
+  * id : BIGINT <<PK>>
+  --
+  * pedido_id : BIGINT <<FK,UK>>
+  * status : VARCHAR
+  * provedor_externo : VARCHAR
+  referencia_externa : VARCHAR
+  * data_solicitacao : TIMESTAMP
+  data_resultado : TIMESTAMP
+}
+
+entity "REGISTRO_AUDITORIA" as auditoria {
+  * id : BIGINT <<PK>>
+  --
+  * tipo : VARCHAR
+  * autor : VARCHAR
+  * data_hora : TIMESTAMP
+  * detalhes : VARCHAR
+  justificativa : VARCHAR
+  pedido_id : BIGINT <<FK, nullable>>
+  cliente_id : BIGINT <<FK, nullable>>
+}
+
+entity "META_UNIDADE" as meta {
+  * id : BIGINT <<PK>>
+  --
+  * unidade_id : BIGINT <<FK>>
+  * ano_mes : VARCHAR(7)
+  * meta_vendas : DECIMAL(12,2)
+}
+
+unidade ||--o{ pu
+produto ||--o{ pu
+unidade ||--o{ estoque
+produto ||--o{ estoque
+unidade ||--o{ pedido
+unidade ||--o{ meta
+cliente |o--o{ pedido
+cliente ||--o| fidelidade
+pedido ||--|{ item
+produto ||--o{ item
+pedido ||--o| pagamento
+pedido |o--o{ auditoria
+cliente |o--o{ auditoria
+@enduml

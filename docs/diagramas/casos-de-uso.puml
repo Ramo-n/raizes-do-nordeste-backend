@@ -1,0 +1,63 @@
+@startuml casos-de-uso
+left to right direction
+skinparam actorStyle awesome
+title Diagrama de Casos de Uso — Rede Raízes do Nordeste
+
+actor "Cliente" as cliente
+actor "Atendente" as atendente
+actor "Gerente da Unidade" as gerente
+actor "Matriz (Franqueadora)" as matriz
+actor "Serviço Externo\nde Pagamento" as gateway
+
+rectangle "Sistema Raízes do Nordeste" {
+  usecase "Visualizar cardápio\nda unidade (RF01)" as UC01
+  usecase "Realizar pedido\n(app/totem/balcão/pick-up) (RF02, RF03)" as UC02
+  usecase "Acompanhar status\ndo pedido (RF04)" as UC03
+  usecase "Solicitar pagamento\nexterno (RF17)" as UC04
+  usecase "Registrar resultado do\npagamento e atualizar pedido (RF17, RF18)" as UC05
+  usecase "Cancelar pedido\n(auditado) (RF07)" as UC06
+  usecase "Aplicar desconto\n(auditado) (RF07, RF12)" as UC07
+  usecase "Gerenciar cardápio e\ndisponibilidade por unidade (RF05)" as UC08
+  usecase "Controlar estoque\nda unidade (RF06)" as UC09
+  usecase "Ajustar estoque\n(auditado) (RF07)" as UC10
+  usecase "Aderir ao programa de\nfidelidade com consentimento (RF11, RF14)" as UC11
+  usecase "Acumular e consultar\npontos de fidelidade (RF11)" as UC12
+  usecase "Consultar relatórios de vendas\npor unidade/região (RF08, RF10)" as UC13
+  usecase "Consultar produtos mais\nconsumidos (RF09)" as UC14
+  usecase "Consultar trilha de\nauditoria (RF07, RF16)" as UC15
+  usecase "Solicitar anonimização\nde dados (LGPD) (RF15)" as UC16
+  usecase "Gerenciar unidades\nda franquia (RF19)" as UC17
+  usecase "Acompanhar metas e\nindicadores por unidade (RF20)" as UC18
+}
+
+cliente --> UC01
+cliente --> UC02
+cliente --> UC03
+cliente --> UC11
+cliente --> UC12
+cliente --> UC16
+
+atendente --> UC02
+atendente --> UC03
+atendente --> UC06
+atendente --> UC07
+
+gerente --> UC08
+gerente --> UC09
+gerente --> UC10
+gerente --> UC06
+gerente --> UC18
+
+matriz --> UC13
+matriz --> UC14
+matriz --> UC15
+matriz --> UC17
+matriz --> UC18
+
+UC02 ..> UC04 : <<include>>
+UC04 --> gateway
+gateway --> UC05
+UC06 ..> UC15 : <<include>> registro
+UC07 ..> UC15 : <<include>> registro
+UC10 ..> UC15 : <<include>> registro
+@enduml

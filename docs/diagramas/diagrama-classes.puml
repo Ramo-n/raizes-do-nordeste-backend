@@ -1,0 +1,154 @@
+@startuml diagrama-classes
+title Diagrama de Classes (domínio) — Rede Raízes do Nordeste
+skinparam classAttributeIconSize 0
+
+enum TipoCozinha {
+  COMPLETA
+  REDUZIDA
+}
+
+enum CanalPedido {
+  APLICATIVO
+  TOTEM
+  BALCAO
+  PICKUP
+}
+
+enum StatusPedido {
+  CRIADO
+  AGUARDANDO_PAGAMENTO
+  PAGO
+  EM_PREPARO
+  PRONTO
+  ENTREGUE
+  CANCELADO
+  PAGAMENTO_RECUSADO
+}
+
+enum StatusPagamento {
+  SOLICITADO
+  CONFIRMADO
+  RECUSADO
+  FALHA
+}
+
+enum TipoOperacaoSensivel {
+  CANCELAMENTO
+  DESCONTO
+  AJUSTE_ESTOQUE
+  ACESSO_DADOS_PESSOAIS
+  ANONIMIZACAO
+}
+
+class Unidade {
+  -id: Long
+  -nome: String
+  -cidade: String
+  -regiao: String
+  -tipoCozinha: TipoCozinha
+  -horarioFuncionamento: String
+  -ativa: boolean
+}
+
+class Produto {
+  -id: Long
+  -nome: String
+  -descricao: String
+  -categoria: String
+}
+
+class ProdutoUnidade {
+  -id: Long
+  -preco: BigDecimal
+  -disponivel: boolean
+  -sazonal: boolean
+  -mesInicioSazonalidade: Integer
+  -mesFimSazonalidade: Integer
+  -variacaoRegional: String
+  +disponivelEm(data): boolean
+}
+
+class EstoqueItem {
+  -id: Long
+  -quantidade: int
+  -quantidadeMinima: int
+  +baixar(qtd)
+  +ajustar(qtd, justificativa)
+}
+
+class Cliente {
+  -id: Long
+  -nome: String
+  -email: String
+  -dataNascimento: LocalDate
+  -consentimentoLgpd: boolean
+  -dataConsentimento: LocalDateTime
+  -anonimizado: boolean
+  +anonimizar()
+}
+
+class ContaFidelidade {
+  -id: Long
+  -pontos: int
+  +acumular(valorPedido)
+  +percentualDescontoProgressivo(): BigDecimal
+}
+
+class Pedido {
+  -id: Long
+  -canal: CanalPedido
+  -status: StatusPedido
+  -dataHora: LocalDateTime
+  -valorBruto: BigDecimal
+  -desconto: BigDecimal
+  -valorTotal: BigDecimal
+  +confirmarPagamento()
+  +recusarPagamento()
+  +avancarStatus()
+  +cancelar(justificativa)
+}
+
+class ItemPedido {
+  -id: Long
+  -quantidade: int
+  -precoUnitario: BigDecimal
+}
+
+class Pagamento {
+  -id: Long
+  -status: StatusPagamento
+  -provedorExterno: String
+  -referenciaExterna: String
+  -dataSolicitacao: LocalDateTime
+  -dataResultado: LocalDateTime
+}
+
+class RegistroAuditoria {
+  -id: Long
+  -tipo: TipoOperacaoSensivel
+  -autor: String
+  -dataHora: LocalDateTime
+  -detalhes: String
+  -justificativa: String
+}
+
+class MetaUnidade {
+  -id: Long
+  -anoMes: String
+  -metaVendas: BigDecimal
+}
+
+Unidade "1" *-- "0..*" ProdutoUnidade
+Produto "1" -- "0..*" ProdutoUnidade
+Unidade "1" *-- "0..*" EstoqueItem
+Produto "1" -- "0..*" EstoqueItem
+Unidade "1" -- "0..*" Pedido
+Unidade "1" -- "0..*" MetaUnidade
+Cliente "0..1" -- "0..*" Pedido : realiza >
+Cliente "1" -- "0..1" ContaFidelidade
+Pedido "1" *-- "1..*" ItemPedido
+ItemPedido "0..*" -- "1" Produto
+Pedido "1" -- "0..1" Pagamento
+RegistroAuditoria "0..*" ..> Pedido : referencia
+RegistroAuditoria "0..*" ..> Cliente : referencia
+@enduml

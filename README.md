@@ -14,7 +14,6 @@ docs/
   02-arquitetura.md         # Arquitetura proposta e decisões justificadas
   03-api.md                 # Documentação da API (também via Swagger UI)
   04-plano-de-testes.md     # Plano de testes (casos CT01–CT15)
-  05-documentacao-final.pdf # Documentação final consolidada em PDF
   diagramas/                # Casos de uso, diagrama de classes e DER (PlantUML + PNG)
 backend/                    # API REST Java 17 + Spring Boot 3
 ```

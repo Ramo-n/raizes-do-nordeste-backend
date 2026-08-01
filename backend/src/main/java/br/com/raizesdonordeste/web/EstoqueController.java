@@ -6,17 +6,13 @@ import br.com.raizesdonordeste.web.dto.Dtos.AjusteEstoqueReq;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/estoque")
-@RequiredArgsConstructor
 @Tag(name = "Estoque", description = "Controle de estoque local por unidade — RF06, RF07")
 public class EstoqueController {
-
     private final EstoqueService estoqueService;
 
     @GetMapping
@@ -29,5 +25,9 @@ public class EstoqueController {
     @Operation(summary = "Ajuste manual de estoque (operação sensível — auditada)")
     public EstoqueItem ajustar(@PathVariable Long itemId, @Valid @RequestBody AjusteEstoqueReq req) {
         return estoqueService.ajustar(itemId, req.novaQuantidade(), req.autor(), req.justificativa());
+    }
+
+    public EstoqueController(EstoqueService estoqueService) {
+        this.estoqueService = estoqueService;
     }
 }

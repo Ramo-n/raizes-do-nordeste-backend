@@ -8,19 +8,15 @@ import br.com.raizesdonordeste.web.dto.Dtos.ItemCardapio;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/unidades")
-@RequiredArgsConstructor
 @Tag(name = "Unidades", description = "Unidades da franquia e seus cardápios — RF01, RF05, RF19")
 public class UnidadeController {
-
     private final UnidadeRepository unidadeRepository;
     private final CardapioService cardapioService;
 
@@ -33,8 +29,7 @@ public class UnidadeController {
     @GetMapping("/{id}")
     @Operation(summary = "Detalhar uma unidade")
     public Unidade buscar(@PathVariable Long id) {
-        return unidadeRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Unidade não encontrada: " + id));
+        return unidadeRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Unidade não encontrada: " + id));
     }
 
     @PostMapping
@@ -48,5 +43,10 @@ public class UnidadeController {
     @Operation(summary = "Cardápio da unidade: só produtos disponíveis no local e no período atual")
     public List<ItemCardapio> cardapio(@PathVariable Long id) {
         return cardapioService.cardapioDaUnidade(id);
+    }
+
+    public UnidadeController(UnidadeRepository unidadeRepository, final CardapioService cardapioService) {
+        this.unidadeRepository = unidadeRepository;
+        this.cardapioService = cardapioService;
     }
 }

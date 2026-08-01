@@ -7,17 +7,14 @@ import br.com.raizesdonordeste.web.dto.Dtos.NovoCliente;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/clientes")
-@RequiredArgsConstructor
 @Tag(name = "Clientes e LGPD", description = "Cadastro, consentimento, anonimização e fidelidade — RF11 a RF16")
 public class ClienteController {
-
     private final ClienteService clienteService;
 
     @PostMapping
@@ -48,5 +45,9 @@ public class ClienteController {
     @Operation(summary = "Pontos, desconto progressivo e frequência de consumo do cliente")
     public FidelidadeResp fidelidade(@PathVariable Long id) {
         return clienteService.fidelidade(id);
+    }
+
+    public ClienteController(ClienteService clienteService) {
+        this.clienteService = clienteService;
     }
 }

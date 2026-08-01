@@ -6,19 +6,15 @@ import br.com.raizesdonordeste.web.dto.Dtos.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/pedidos")
-@RequiredArgsConstructor
 @Tag(name = "Pedidos", description = "Pedidos multicanal (app, totem, balcão, pick-up) — RF02, RF03, RF04, RF07")
 public class PedidoController {
-
     private final PedidoService pedidoService;
 
     @PostMapping
@@ -59,11 +55,10 @@ public class PedidoController {
     }
 
     static PedidoResp toResp(Pedido p) {
-        return new PedidoResp(p.getId(), p.getUnidade().getId(),
-                p.getCliente() != null ? p.getCliente().getId() : null,
-                p.getCanal(), p.getStatus(), p.getDataHora(),
-                p.getValorBruto(), p.getDesconto(), p.getValorTotal(),
-                p.getItens().stream().map(i -> new ItemPedidoResp(i.getProduto().getId(),
-                        i.getProduto().getNome(), i.getQuantidade(), i.getPrecoUnitario())).toList());
+        return new PedidoResp(p.getId(), p.getUnidade().getId(), p.getCliente() != null ? p.getCliente().getId() : null, p.getCanal(), p.getStatus(), p.getDataHora(), p.getValorBruto(), p.getDesconto(), p.getValorTotal(), p.getItens().stream().map(i -> new ItemPedidoResp(i.getProduto().getId(), i.getProduto().getNome(), i.getQuantidade(), i.getPrecoUnitario())).toList());
+    }
+
+    public PedidoController(PedidoService pedidoService) {
+        this.pedidoService = pedidoService;
     }
 }

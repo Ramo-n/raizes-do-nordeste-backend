@@ -4,17 +4,13 @@ import br.com.raizesdonordeste.service.RelatorioService;
 import br.com.raizesdonordeste.web.dto.Dtos.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/relatorios")
-@RequiredArgsConstructor
 @Tag(name = "Relatórios (Matriz)", description = "Indicadores consolidados da franqueadora — RF08, RF09, RF10, RF20")
 public class RelatorioController {
-
     private final RelatorioService relatorioService;
 
     @GetMapping("/vendas-por-unidade")
@@ -39,5 +35,9 @@ public class RelatorioController {
     @Operation(summary = "Metas e indicadores de desempenho da unidade")
     public List<IndicadorUnidade> indicadores(@PathVariable Long unidadeId) {
         return relatorioService.indicadoresDaUnidade(unidadeId);
+    }
+
+    public RelatorioController(RelatorioService relatorioService) {
+        this.relatorioService = relatorioService;
     }
 }

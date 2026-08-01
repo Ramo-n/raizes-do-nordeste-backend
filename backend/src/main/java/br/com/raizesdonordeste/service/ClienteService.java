@@ -8,22 +8,20 @@ import br.com.raizesdonordeste.repository.ContaFidelidadeRepository;
 import br.com.raizesdonordeste.repository.PedidoRepository;
 import br.com.raizesdonordeste.web.dto.Dtos.FidelidadeResp;
 import br.com.raizesdonordeste.web.dto.Dtos.NovoCliente;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 
 @Service
-@RequiredArgsConstructor
 public class ClienteService {
-
     private final ClienteRepository clienteRepository;
     private final ContaFidelidadeRepository contaFidelidadeRepository;
     private final PedidoRepository pedidoRepository;
     private final AuditoriaService auditoriaService;
 
-    /** RF14: cadastro com registro de consentimento explícito; RF11: adesão à fidelidade. */
+    /**
+     * RF14: cadastro com registro de consentimento explícito; RF11: adesão à fidelidade.
+     */
     @Transactional
     public Cliente cadastrar(NovoCliente req) {
         Cliente cliente = new Cliente();
@@ -35,7 +33,6 @@ public class ClienteService {
             cliente.setDataConsentimento(LocalDateTime.now());
         }
         cliente = clienteRepository.save(cliente);
-
         if (cliente.isConsentimentoLgpd()) {
             ContaFidelidade conta = new ContaFidelidade();
             conta.setCliente(cliente);
@@ -44,7 +41,9 @@ public class ClienteService {
         return cliente;
     }
 
-    /** RF14: consentimento pode ser dado depois do cadastro. */
+    /**
+     * RF14: consentimento pode ser dado depois do cadastro.
+     */
     @Transactional
     public Cliente registrarConsentimento(Long clienteId) {
         Cliente cliente = buscarInterno(clienteId);
@@ -60,16 +59,19 @@ public class ClienteService {
         return cliente;
     }
 
-    /** RF16: todo acesso a dados pessoais é auditado. */
+    /**
+     * RF16: todo acesso a dados pessoais é auditado.
+     */
     @Transactional
     public Cliente consultar(Long clienteId, String autor) {
         Cliente cliente = buscarInterno(clienteId);
-        auditoriaService.registrar(TipoOperacaoSensivel.ACESSO_DADOS_PESSOAIS, autor,
-                "Consulta de dados pessoais do cliente " + clienteId, null, null, clienteId);
+        auditoriaService.registrar(TipoOperacaoSensivel.ACESSO_DADOS_PESSOAIS, autor, "Consulta de dados pessoais do cliente " + clienteId, null, null, clienteId);
         return cliente;
     }
 
-    /** RF15: anonimização irreversível, preservando pedidos para relatórios (INF07). */
+    /**
+     * RF15: anonimização irreversível, preservando pedidos para relatórios (INF07).
+     */
     @Transactional
     public Cliente anonimizar(Long clienteId, String autor) {
         Cliente cliente = buscarInterno(clienteId);
@@ -77,25 +79,28 @@ public class ClienteService {
             throw new NegocioException("Cliente já anonimizado");
         }
         cliente.anonimizar();
-        auditoriaService.registrar(TipoOperacaoSensivel.ANONIMIZACAO, autor,
-                "Anonimização dos dados do cliente " + clienteId, "Solicitação do titular (LGPD)",
-                null, clienteId);
+        auditoriaService.registrar(TipoOperacaoSensivel.ANONIMIZACAO, autor, "Anonimização dos dados do cliente " + clienteId, "Solicitação do titular (LGPD)", null, clienteId);
         return cliente;
     }
 
-    /** RF11/RF12/RF13: pontos, desconto progressivo e frequência de consumo. */
+    /**
+     * RF11/RF12/RF13: pontos, desconto progressivo e frequência de consumo.
+     */
     @Transactional(readOnly = true)
     public FidelidadeResp fidelidade(Long clienteId) {
-        ContaFidelidade conta = contaFidelidadeRepository.findByClienteId(clienteId)
-                .orElseThrow(() -> new RecursoNaoEncontradoException(
-                        "Cliente sem conta de fidelidade (é necessário consentimento LGPD): " + clienteId));
+        ContaFidelidade conta = contaFidelidadeRepository.findByClienteId(clienteId).orElseThrow(() -> new RecursoNaoEncontradoException("Cliente sem conta de fidelidade (é necessário consentimento LGPD): " + clienteId));
         long frequencia = pedidoRepository.frequenciaConsumo(clienteId);
-        return new FidelidadeResp(clienteId, conta.getPontos(),
-                conta.percentualDescontoProgressivo(), frequencia);
+        return new FidelidadeResp(clienteId, conta.getPontos(), conta.percentualDescontoProgressivo(), frequencia);
     }
 
     private Cliente buscarInterno(Long clienteId) {
-        return clienteRepository.findById(clienteId)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Cliente não encontrado: " + clienteId));
+        return clienteRepository.findById(clienteId).orElseThrow(() -> new RecursoNaoEncontradoException("Cliente não encontrado: " + clienteId));
+    }
+
+    public ClienteService(ClienteRepository clienteRepository, final ContaFidelidadeRepository contaFidelidadeRepository, final PedidoRepository pedidoRepository, final AuditoriaService auditoriaService) {
+        this.clienteRepository = clienteRepository;
+        this.contaFidelidadeRepository = contaFidelidadeRepository;
+        this.pedidoRepository = pedidoRepository;
+        this.auditoriaService = auditoriaService;
     }
 }

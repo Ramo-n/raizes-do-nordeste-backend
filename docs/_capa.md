@@ -5,7 +5,9 @@ author: "Ramon De Oliveira"
 date: "Julho de 2026"
 geometry: margin=2.5cm
 lang: pt-BR
+header-includes:
+  - \usepackage{float}
+  - \floatplacement{figure}{H}
 ---
 
 \newpage
-

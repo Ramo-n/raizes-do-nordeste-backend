@@ -75,14 +75,13 @@ Somente inferências indispensáveis para o sistema funcionar, cada uma ancorada
 |----|-----------|---------------|
 | INF01 | O ciclo de vida do pedido possui estados: `CRIADO → AGUARDANDO_PAGAMENTO → PAGO → EM_PREPARO → PRONTO → ENTREGUE`, com `CANCELADO` e `PAGAMENTO_RECUSADO` como desvios. | O estudo exige "acompanhar o status" (seção 2) e atualização de status conforme resultado do pagamento (seção 5); cancelamento é citado como operação sensível auditável (seção 3). Estados mínimos para cobrir essas exigências. |
 | INF02 | Existe cadastro de cliente vinculado ao programa de fidelidade, com dados mínimos (nome, e-mail, data de nascimento) e flag de consentimento. | A fidelização considera "frequência de consumo, idade e perfil" (seção 4) — exige identificar o cliente e sua data de nascimento; a LGPD exige consentimento registrado. Pedidos de balcão/totem podem ser anônimos (nada no estudo obriga identificação). |
-| RegraINF03 | A regra de desconto progressivo é parametrizada por faixas de pontos acumulados. | "Descontos progressivos" (seção 4) exige alguma progressão; faixas de pontos é a materialização mínima, sem inventar regras adicionais. Valores das faixas são configuráveis. |
+| INF03 | A regra de desconto progressivo é parametrizada por faixas de pontos acumulados. | "Descontos progressivos" (seção 4) exige alguma progressão; faixas de pontos é a materialização mínima, sem inventar regras adicionais. Valores das faixas são configuráveis. |
 | INF04 | A baixa de estoque ocorre quando o pedido é confirmado (pago), por unidade. | "Controle de estoque local" (seção 3) só faz sentido se o consumo dos pedidos abater o estoque da unidade. |
 | INF05 | A integração de pagamento é assíncrona: o sistema solicita e recebe o resultado por callback/consulta (gateway simulado na implementação). | Seção 5 descreve exatamente esse fluxo (solicita → recebe confirmação/negativa → registra → atualiza), e afirma que o processamento é externo. O gateway real não faz parte do escopo. |
 | INF06 | Perfis de acesso mínimos: CLIENTE, ATENDENTE, GERENTE (unidade) e MATRIZ. | Seção 3 cita equipes (atendentes, cozinheiros, gerentes) e necessidades exclusivas da matriz (relatórios consolidados, auditoria); relatórios e auditoria não podem ser públicos (rastreabilidade/transparência, LGPD). |
 | INF07 | A anonimização substitui dados pessoais identificáveis por valores irreversíveis, preservando registros de pedidos para relatórios. | Seção 4 pede anonimização "quando aplicável" e a matriz continua precisando de dados consolidados (seção 3). |
 | INF08 | Auditoria é registrada em trilha imutável (append-only) com autor, operação, data e justificativa. | "Rastreabilidade e transparência" (seção 3) e "auditoria de acessos" (seção 4) exigem esses atributos mínimos. |
 
-*(INF03 numerada como RegraINF03 na tabela apenas por legibilidade; refere-se à inferência 03.)*
 
 ## Etapa 4 — Validação
 

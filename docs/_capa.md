@@ -10,13 +10,13 @@ header-includes:
   - \floatplacement{figure}{H}
 ---
 
-**Curso:** [PREENCHER]
+**Curso:** CST em Análise e Desenvolvimento de Sistemas
 
 **Disciplina:** Projeto Multidisciplinar
 
 **Aluno:** Ramon De Oliveira
 
-**RU:** [PREENCHER]
+**RU:** 4904087
 
 **Polo de apoio:** [PREENCHER]
 

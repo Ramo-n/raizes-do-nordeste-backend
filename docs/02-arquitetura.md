@@ -4,8 +4,8 @@
 
 A solução é um **back-end único (API REST)** que atende todos os canais descritos no
 estudo de caso — aplicativo oficial, totens de autoatendimento, atendimento de balcão e
-pick-up (seção 2) — garantindo a **consistência multicanal** (RNF09): todos os canais
-consomem as mesmas regras de negócio e os mesmos dados.
+pick-up (seção 2). Assim, todos os canais usam as mesmas regras de negócio e os mesmos
+dados, e o cliente tem a mesma experiência em qualquer um deles.
 
 ```
  App oficial   Totem   Balcão/PDV   Pick-up
@@ -19,50 +19,51 @@ consomem as mesmas regras de negócio e os mesmos dados.
         +----------------------------+
            |            |         \
            |            |          \-> Serviço externo de
-        Banco de     Trilha de         pagamento (integração
-        dados        auditoria         assíncrona, seção 5)
-        relacional   (append-only)
+        Banco de     Registros         pagamento (seção 5)
+        dados        de auditoria
+        relacional
 ```
 
-### Estilo arquitetural e decisões
+### Decisões e justificativas
 
 | Decisão | Justificativa (estudo de caso) |
 |---------|-------------------------------|
-| API REST stateless em camadas (Controller/Service/Repository) | Statelessness permite replicação horizontal → escalabilidade e alta disponibilidade (seção 6). Camadas separam regras de negócio (seção 7: "modele dados, processos e regras de negócio"). |
-| Monólito modular (módulos: catálogo, pedidos, estoque, fidelidade, pagamentos, auditoria, relatórios, LGPD) | Coerente e sustentável (seção 7) para o porte atual; os módulos têm fronteiras claras que permitem extração futura para microsserviços conforme o crescimento da rede (seções 1 e 6), sem custo prematuro de operação distribuída. |
-| Pagamento **desacoplado** via porta/adaptador (`PagamentoGateway`) | Seção 5: o sistema apenas solicita, recebe o resultado, registra e atualiza o pedido. O adaptador real (gateway) fica fora do núcleo; na entrega acadêmica é simulado. |
-| Confirmação de pagamento por endpoint de callback (webhook) idempotente | Seção 5 descreve fluxo assíncrono (confirmação/negativa chega depois); idempotência é o tratamento de falhas exigido (reentrega do callback não duplica efeito). |
-| Trilha de auditoria append-only para operações sensíveis e acessos a dados pessoais | Seções 3 e 4 (cancelamentos, descontos, ajustes; auditoria de acessos; rastreabilidade e transparência). |
-| Banco relacional (H2 em dev/entrega; PostgreSQL em produção) | Dados fortemente relacionais (pedidos, itens, estoque por unidade) e necessidade de transações ACID para baixa de estoque e pagamento (seções 3 e 5). |
-| Dados de cartão nunca transitam pelo sistema | Seção 5: processamento é 100% externo — reduz risco e escopo de segurança. |
-| Perfis de acesso (CLIENTE, ATENDENTE, GERENTE, MATRIZ) | Seção 3 (equipes e matriz) + LGPD (seção 4): relatórios e auditoria restritos. |
+| API REST organizada em camadas (Controller, Service, Repository) | Separa as regras de negócio do restante do código, deixando o sistema mais organizado e fácil de manter (seção 7). |
+| Uma única aplicação, dividida em módulos (cardápio, pedidos, estoque, fidelidade, pagamentos, auditoria, relatórios) | É a opção mais simples de desenvolver e manter para o porte atual da rede; no futuro, com o crescimento, os módulos podem virar serviços separados (seções 1 e 6). |
+| Pagamento feito por serviço externo, através de uma interface (`PagamentoGateway`) | Seção 5: o sistema apenas solicita o pagamento e recebe o resultado. Usando uma interface, é possível trocar o provedor sem mexer no resto do código; na entrega acadêmica o provedor é simulado. |
+| O resultado do pagamento chega por um endpoint de retorno (callback) protegido contra duplicação | Seção 5 pede cuidado no tratamento de falhas: se o serviço externo enviar o mesmo resultado duas vezes, o sistema percebe e não baixa o estoque nem soma pontos em dobro. |
+| Registros de auditoria que só podem ser adicionados (nunca alterados ou apagados) | Seções 3 e 4: cancelamentos, descontos, ajustes e acessos a dados pessoais precisam ficar registrados com autor, data e justificativa. |
+| Banco de dados relacional (H2 na entrega; PostgreSQL sugerido para produção) | Os dados são bem relacionados entre si (pedidos, itens, estoque por unidade) e operações como baixa de estoque precisam de transações (seções 3 e 5). |
+| Dados de cartão nunca passam pelo sistema | Seção 5: o processamento é 100% externo — menos risco de segurança. |
+| Perfis de acesso (cliente, atendente, gerente, matriz) | Seção 3 (equipes e matriz) + LGPD (seção 4): relatórios e auditoria não podem ser públicos. |
 
 ### Alta disponibilidade, escalabilidade e tolerância a falhas (seção 6)
 
-- **Stateless + réplicas atrás de load balancer**: qualquer instância atende qualquer
-  requisição; picos de demanda são absorvidos adicionando réplicas (scale-out).
-- **Banco com réplica de leitura**: relatórios da matriz (seção 3) leem da réplica, sem
-  concorrer com a operação das lojas nos horários de pico.
-- **Falha do serviço de pagamento**: o pedido permanece `AGUARDANDO_PAGAMENTO`; a
-  solicitação pode ser reenviada e o callback é idempotente — nenhum estado é corrompido
-  (seção 5, "tratamento de falhas").
-- **Timeouts e retries com backoff** nas chamadas externas; nenhuma chamada externa dentro
-  de transação de banco.
-- **Observabilidade**: logs estruturados + trilha de auditoria dão rastreabilidade
-  (seção 3).
+- A API não guarda estado na memória entre requisições, então é possível rodar várias
+  cópias dela ao mesmo tempo atrás de um balanceador de carga — nos horários de pico,
+  basta adicionar mais cópias;
+- Os relatórios da matriz podem ler de uma cópia do banco, para não atrapalhar a operação
+  das lojas nos horários de pico;
+- Se o serviço de pagamento falhar, o pedido fica como `AGUARDANDO_PAGAMENTO` e a
+  solicitação pode ser feita de novo, sem corromper nenhum dado;
+- As chamadas ao serviço externo têm limite de tempo (timeout) e podem ser repetidas em
+  caso de erro;
+- Os logs da aplicação e os registros de auditoria permitem rastrear o que aconteceu no
+  sistema (seção 3).
 
 ### LGPD (seção 4)
 
-- Consentimento explícito registrado com data/hora (opt-in) antes de qualquer uso para
-  fidelidade/campanhas.
-- Anonimização irreversível sob demanda, preservando os pedidos para os relatórios
-  consolidados da matriz (dados deixam de ser pessoais).
-- Todo acesso a dados pessoais e toda anonimização geram registro de auditoria.
-- Minimização: armazenam-se apenas nome, e-mail e data de nascimento (necessários a
-  fidelidade e campanhas por idade/perfil/frequência — seção 4).
+- O consentimento do cliente é registrado com data e hora antes de qualquer uso dos dados
+  para fidelidade ou campanhas;
+- O cliente pode pedir a anonimização: seus dados pessoais são apagados de forma
+  definitiva, mas os pedidos continuam existindo para os relatórios da matriz (sem
+  identificar ninguém);
+- Todo acesso a dados pessoais e toda anonimização geram um registro de auditoria;
+- São guardados apenas os dados necessários: nome, e-mail e data de nascimento (usados
+  pela fidelidade e pelas campanhas por idade/perfil/frequência — seção 4).
 
-### Evolução
+### Evolução futura
 
-O crescimento da rede (seções 1 e 6) é suportado sem redesenho: novos canais consomem a
-mesma API; módulos podem ser extraídos para serviços independentes; o particionamento
-natural dos dados por `unidade_id` facilita sharding futuro.
+O crescimento da rede (seções 1 e 6) é suportado sem grandes mudanças: novos canais podem
+consumir a mesma API e, se necessário, os módulos podem ser separados em serviços
+independentes no futuro.

@@ -12,8 +12,9 @@ e implementação de uma API REST funcional com testes automatizados.
   da tecnologia;
 - Delimitar o escopo é tão importante quanto implementar: funcionalidades sem respaldo no
   estudo de caso (delivery, processamento de cartão, RH) foram deliberadamente excluídas;
-- Integrações externas exigem cuidado com falhas: o callback de pagamento precisou ser
-  idempotente para suportar reenvios sem duplicar efeitos.
+- Integrações externas exigem cuidado com falhas: foi preciso garantir que, se o serviço
+  de pagamento enviar o mesmo resultado duas vezes, o sistema não baixe o estoque nem some
+  pontos em dobro.
 
 ## Desafios
 

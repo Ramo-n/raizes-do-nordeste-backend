@@ -48,7 +48,7 @@ com desvios `CANCELADO` e `PAGAMENTO_RECUSADO`.
 
 | Método | Rota | Descrição |
 |--------|------|-----------|
-| POST | `/api/pagamentos/{pedidoId}/resultado` | Callback (webhook) do provedor externo com `CONFIRMADO` ou `RECUSADO`. **Idempotente**: reentregas não duplicam baixa de estoque nem pontos |
+| POST | `/api/pagamentos/{pedidoId}/resultado` | Retorno do serviço externo com `CONFIRMADO` ou `RECUSADO`. Se o mesmo resultado for enviado duas vezes, o sistema ignora a repetição |
 
 ```json
 POST /api/pagamentos/1/resultado
@@ -65,7 +65,7 @@ O sistema nunca recebe dados de cartão — apenas o resultado do processamento 
 | POST | `/api/clientes` | Cadastro (com consentimento explícito opcional) |
 | GET | `/api/clientes/{id}` | Consulta dados pessoais — exige header `X-Autor` e gera auditoria de acesso |
 | POST | `/api/clientes/{id}/consentimento` | Registra consentimento explícito e abre a conta de fidelidade |
-| POST | `/api/clientes/{id}/anonimizacao` | Anonimização irreversível (auditada) — exige header `X-Autor` |
+| POST | `/api/clientes/{id}/anonimizacao` | Anonimização definitiva dos dados do cliente (auditada) — exige header `X-Autor` |
 | GET | `/api/clientes/{id}/fidelidade` | Pontos, percentual de desconto progressivo e frequência de consumo |
 
 Regras de fidelidade (INF03): 1 ponto por R$1 em pedidos confirmados; desconto progressivo

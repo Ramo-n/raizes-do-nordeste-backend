@@ -13,9 +13,7 @@ public class CardapioService {
     private final UnidadeRepository unidadeRepository;
     private final ProdutoUnidadeRepository produtoUnidadeRepository;
 
-    /**
-     * RF01/RF05: cardápio da unidade contendo só produtos disponíveis no local e na data.
-     */
+    // RF01/RF05: cardápio da unidade contendo só produtos disponíveis no local e na data.
     @Transactional(readOnly = true)
     public List<ItemCardapio> cardapioDaUnidade(Long unidadeId) {
         if (!unidadeRepository.existsById(unidadeId)) {
@@ -25,7 +23,7 @@ public class CardapioService {
         return produtoUnidadeRepository.findByUnidadeId(unidadeId).stream().filter(pu -> pu.disponivelEm(hoje)).map(pu -> new ItemCardapio(pu.getProduto().getId(), pu.getProduto().getNome(), pu.getProduto().getDescricao(), pu.getProduto().getCategoria(), pu.getPreco(), pu.getVariacaoRegional(), pu.isSazonal())).toList();
     }
 
-    public CardapioService(UnidadeRepository unidadeRepository, final ProdutoUnidadeRepository produtoUnidadeRepository) {
+    public CardapioService(UnidadeRepository unidadeRepository, ProdutoUnidadeRepository produtoUnidadeRepository) {
         this.unidadeRepository = unidadeRepository;
         this.produtoUnidadeRepository = produtoUnidadeRepository;
     }

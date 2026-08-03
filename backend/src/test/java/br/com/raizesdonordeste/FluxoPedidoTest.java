@@ -62,7 +62,7 @@ class FluxoPedidoTest {
         pedidoService.registrarResultadoPagamento(pedido.getId(), StatusPagamento.CONFIRMADO, "EXT-1");
         int estoqueAposPrimeiro = estoqueItemRepository.findByUnidadeIdAndProdutoId(1L, 1L).orElseThrow().getQuantidade();
 
-        // reentrega do callback não pode baixar estoque de novo (RF18)
+        // o mesmo resultado enviado de novo não pode baixar o estoque duas vezes (RF18)
         pedidoService.registrarResultadoPagamento(pedido.getId(), StatusPagamento.CONFIRMADO, "EXT-1");
 
         assertThat(estoqueItemRepository.findByUnidadeIdAndProdutoId(1L, 1L).orElseThrow().getQuantidade())

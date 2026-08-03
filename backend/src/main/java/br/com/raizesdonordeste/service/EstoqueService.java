@@ -12,17 +12,13 @@ public class EstoqueService {
     private final EstoqueItemRepository estoqueItemRepository;
     private final AuditoriaService auditoriaService;
 
-    /**
-     * RF06: consulta do estoque local da unidade.
-     */
+    // RF06: consulta do estoque local da unidade.
     @Transactional(readOnly = true)
     public List<EstoqueItem> estoqueDaUnidade(Long unidadeId) {
         return estoqueItemRepository.findByUnidadeId(unidadeId);
     }
 
-    /**
-     * RF07: ajuste manual de estoque é operação sensível — sempre auditada.
-     */
+    // RF07: ajuste manual de estoque é operação sensível — sempre auditada.
     @Transactional
     public EstoqueItem ajustar(Long estoqueItemId, int novaQuantidade, String autor, String justificativa) {
         EstoqueItem item = estoqueItemRepository.findById(estoqueItemId).orElseThrow(() -> new RecursoNaoEncontradoException("Item de estoque não encontrado: " + estoqueItemId));
@@ -35,7 +31,7 @@ public class EstoqueService {
         return item;
     }
 
-    public EstoqueService(EstoqueItemRepository estoqueItemRepository, final AuditoriaService auditoriaService) {
+    public EstoqueService(EstoqueItemRepository estoqueItemRepository, AuditoriaService auditoriaService) {
         this.estoqueItemRepository = estoqueItemRepository;
         this.auditoriaService = auditoriaService;
     }

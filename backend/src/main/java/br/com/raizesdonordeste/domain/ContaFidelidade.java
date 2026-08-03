@@ -15,16 +15,12 @@ public class ContaFidelidade {
     @Column(nullable = false)
     private int pontos = 0;
 
-    /**
-     * 1 ponto a cada R$1 gasto em pedidos confirmados.
-     */
+    // 1 ponto a cada R$1 gasto em pedidos confirmados.
     public void acumular(BigDecimal valorPedido) {
         this.pontos += valorPedido.intValue();
     }
 
-    /**
-     * Desconto progressivo por faixa de pontos acumulados (inferência INF03).
-     */
+    // Desconto progressivo por faixa de pontos acumulados (inferência INF03).
     public BigDecimal percentualDescontoProgressivo() {
         if (pontos >= 1000) return new BigDecimal("0.15");
         if (pontos >= 500) return new BigDecimal("0.10");

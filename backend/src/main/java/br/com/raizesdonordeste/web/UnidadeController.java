@@ -45,7 +45,7 @@ public class UnidadeController {
         return cardapioService.cardapioDaUnidade(id);
     }
 
-    public UnidadeController(UnidadeRepository unidadeRepository, final CardapioService cardapioService) {
+    public UnidadeController(UnidadeRepository unidadeRepository, CardapioService cardapioService) {
         this.unidadeRepository = unidadeRepository;
         this.cardapioService = cardapioService;
     }

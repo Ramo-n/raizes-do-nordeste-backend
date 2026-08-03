@@ -22,9 +22,7 @@ public class PedidoService {
     private final PagamentoGateway pagamentoGateway;
     private final AuditoriaService auditoriaService;
 
-    /**
-     * RF02/RF03: registra pedido de qualquer canal; RF17: solicita pagamento externo.
-     */
+    // RF02/RF03: registra pedido de qualquer canal; RF17: solicita pagamento externo.
     @Transactional
     public Pedido criarPedido(NovoPedido req) {
         Unidade unidade = unidadeRepository.findById(req.unidadeId()).orElseThrow(() -> new RecursoNaoEncontradoException("Unidade não encontrada: " + req.unidadeId()));
@@ -70,9 +68,7 @@ public class PedidoService {
         return pedido;
     }
 
-    /**
-     * RF12: desconto progressivo do programa de fidelidade (INF03).
-     */
+    // RF12: desconto progressivo do programa de fidelidade (INF03).
     private BigDecimal descontoFidelidade(Pedido pedido, BigDecimal bruto) {
         if (pedido.getCliente() == null || !pedido.getCliente().isConsentimentoLgpd()) {
             return BigDecimal.ZERO;
@@ -80,15 +76,13 @@ public class PedidoService {
         return contaFidelidadeRepository.findByClienteId(pedido.getCliente().getId()).map(conta -> bruto.multiply(conta.percentualDescontoProgressivo()).setScale(2, RoundingMode.HALF_UP)).orElse(BigDecimal.ZERO);
     }
 
-    /**
-     * RF17/RF18: registra o resultado do pagamento externo e atualiza o pedido (idempotente).
-     */
+    // RF17/RF18: registra o resultado do pagamento externo e atualiza o pedido
     @Transactional
     public Pedido registrarResultadoPagamento(Long pedidoId, StatusPagamento resultado, String referenciaExterna) {
         Pedido pedido = buscar(pedidoId);
         Pagamento pagamento = pagamentoRepository.findByPedidoId(pedidoId).orElseThrow(() -> new RecursoNaoEncontradoException("Pagamento não encontrado para o pedido " + pedidoId));
         if (pagamento.getStatus() != StatusPagamento.SOLICITADO) {
-            return pedido; // idempotência: resultado já processado
+            return pedido; // resultado já foi processado antes, não repete
         }
         if (resultado != StatusPagamento.CONFIRMADO && resultado != StatusPagamento.RECUSADO) {
             throw new NegocioException("Resultado de pagamento inválido: " + resultado);
@@ -106,9 +100,7 @@ public class PedidoService {
         return pedido;
     }
 
-    /**
-     * RF06/INF04: baixa de estoque da unidade quando o pedido é confirmado.
-     */
+    // RF06/INF04: baixa de estoque da unidade quando o pedido é confirmado.
     private void baixarEstoque(Pedido pedido) {
         for (ItemPedido item : pedido.getItens()) {
             EstoqueItem estoque = estoqueItemRepository.findByUnidadeIdAndProdutoId(pedido.getUnidade().getId(), item.getProduto().getId()).orElseThrow(() -> new NegocioException("Estoque não encontrado para " + item.getProduto().getNome()));
@@ -119,17 +111,13 @@ public class PedidoService {
         }
     }
 
-    /**
-     * RF11: acumula pontos apenas com consentimento LGPD (RF14).
-     */
+    // RF11: acumula pontos apenas com consentimento LGPD (RF14).
     private void acumularPontos(Pedido pedido) {
         if (pedido.getCliente() == null || !pedido.getCliente().isConsentimentoLgpd()) return;
         contaFidelidadeRepository.findByClienteId(pedido.getCliente().getId()).ifPresent(conta -> conta.acumular(pedido.getValorTotal()));
     }
 
-    /**
-     * RF04: avanço do status operacional do pedido.
-     */
+    // RF04: avanço do status operacional do pedido.
     @Transactional
     public Pedido avancarStatus(Long pedidoId) {
         Pedido pedido = buscar(pedidoId);
@@ -147,9 +135,7 @@ public class PedidoService {
         return pedido;
     }
 
-    /**
-     * RF07: cancelamento é operação sensível — sempre auditada.
-     */
+    // RF07: cancelamento é operação sensível — sempre auditada.
     @Transactional
     public Pedido cancelar(Long pedidoId, String autor, String justificativa) {
         Pedido pedido = buscar(pedidoId);
@@ -171,9 +157,7 @@ public class PedidoService {
         }
     }
 
-    /**
-     * RF07: desconto manual é operação sensível — sempre auditada.
-     */
+    // RF07: desconto manual é operação sensível — sempre auditada.
     @Transactional
     public Pedido aplicarDesconto(Long pedidoId, BigDecimal valorDesconto, String autor, String justificativa) {
         Pedido pedido = buscar(pedidoId);
@@ -199,7 +183,7 @@ public class PedidoService {
         return pedidoRepository.findByUnidadeId(unidadeId);
     }
 
-    public PedidoService(PedidoRepository pedidoRepository, final UnidadeRepository unidadeRepository, final ClienteRepository clienteRepository, final ProdutoUnidadeRepository produtoUnidadeRepository, final EstoqueItemRepository estoqueItemRepository, final PagamentoRepository pagamentoRepository, final ContaFidelidadeRepository contaFidelidadeRepository, final PagamentoGateway pagamentoGateway, final AuditoriaService auditoriaService) {
+    public PedidoService(PedidoRepository pedidoRepository, UnidadeRepository unidadeRepository, ClienteRepository clienteRepository, ProdutoUnidadeRepository produtoUnidadeRepository, EstoqueItemRepository estoqueItemRepository, PagamentoRepository pagamentoRepository, ContaFidelidadeRepository contaFidelidadeRepository, PagamentoGateway pagamentoGateway, AuditoriaService auditoriaService) {
         this.pedidoRepository = pedidoRepository;
         this.unidadeRepository = unidadeRepository;
         this.clienteRepository = clienteRepository;

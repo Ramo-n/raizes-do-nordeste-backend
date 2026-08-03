@@ -19,9 +19,7 @@ public class ClienteService {
     private final PedidoRepository pedidoRepository;
     private final AuditoriaService auditoriaService;
 
-    /**
-     * RF14: cadastro com registro de consentimento explícito; RF11: adesão à fidelidade.
-     */
+    // RF14: cadastro com registro de consentimento explícito; RF11: adesão à fidelidade.
     @Transactional
     public Cliente cadastrar(NovoCliente req) {
         Cliente cliente = new Cliente();
@@ -41,9 +39,7 @@ public class ClienteService {
         return cliente;
     }
 
-    /**
-     * RF14: consentimento pode ser dado depois do cadastro.
-     */
+    // RF14: consentimento pode ser dado depois do cadastro.
     @Transactional
     public Cliente registrarConsentimento(Long clienteId) {
         Cliente cliente = buscarInterno(clienteId);
@@ -59,9 +55,7 @@ public class ClienteService {
         return cliente;
     }
 
-    /**
-     * RF16: todo acesso a dados pessoais é auditado.
-     */
+    // RF16: todo acesso a dados pessoais é auditado.
     @Transactional
     public Cliente consultar(Long clienteId, String autor) {
         Cliente cliente = buscarInterno(clienteId);
@@ -69,9 +63,7 @@ public class ClienteService {
         return cliente;
     }
 
-    /**
-     * RF15: anonimização irreversível, preservando pedidos para relatórios (INF07).
-     */
+    // RF15: apaga os dados pessoais do cliente, mantendo os pedidos para relatórios (INF07).
     @Transactional
     public Cliente anonimizar(Long clienteId, String autor) {
         Cliente cliente = buscarInterno(clienteId);
@@ -83,9 +75,7 @@ public class ClienteService {
         return cliente;
     }
 
-    /**
-     * RF11/RF12/RF13: pontos, desconto progressivo e frequência de consumo.
-     */
+    // RF11/RF12/RF13: pontos, desconto progressivo e frequência de consumo.
     @Transactional(readOnly = true)
     public FidelidadeResp fidelidade(Long clienteId) {
         ContaFidelidade conta = contaFidelidadeRepository.findByClienteId(clienteId).orElseThrow(() -> new RecursoNaoEncontradoException("Cliente sem conta de fidelidade (é necessário consentimento LGPD): " + clienteId));
@@ -97,7 +87,7 @@ public class ClienteService {
         return clienteRepository.findById(clienteId).orElseThrow(() -> new RecursoNaoEncontradoException("Cliente não encontrado: " + clienteId));
     }
 
-    public ClienteService(ClienteRepository clienteRepository, final ContaFidelidadeRepository contaFidelidadeRepository, final PedidoRepository pedidoRepository, final AuditoriaService auditoriaService) {
+    public ClienteService(ClienteRepository clienteRepository, ContaFidelidadeRepository contaFidelidadeRepository, PedidoRepository pedidoRepository, AuditoriaService auditoriaService) {
         this.clienteRepository = clienteRepository;
         this.contaFidelidadeRepository = contaFidelidadeRepository;
         this.pedidoRepository = pedidoRepository;

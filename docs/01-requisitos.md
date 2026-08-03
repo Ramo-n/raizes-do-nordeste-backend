@@ -1,4 +1,4 @@
-# Rede "Raízes do Nordeste" — Levantamento de Requisitos
+# 2. Análise e Requisitos
 
 > Documento produzido a partir da leitura integral do estudo de caso oficial da disciplina
 > Projeto Multidisciplinar (Trilha Back-end). Todas as afirmações abaixo referenciam a

@@ -1,4 +1,4 @@
-# Conclusão
+# 6. Conclusão
 
 O desenvolvimento deste projeto permitiu aplicar, de forma integrada, os conceitos de
 Engenharia de Software estudados ao longo do curso: levantamento e análise de requisitos a
@@ -29,7 +29,7 @@ e implementação de uma API REST funcional com testes automatizados.
 - Integrar um gateway de pagamento real no lugar do simulado;
 - Evoluir os relatórios da matriz com filtros por período e exportação.
 
-# Referências
+# 7. Referências
 
 - Estudo de caso "Rede Raízes do Nordeste — Tecnologia, Tradição e Escala", disciplina
   Projeto Multidisciplinar (roteiro oficial da atividade).

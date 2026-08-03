@@ -1,4 +1,4 @@
-# Documentação da API — Raízes do Nordeste
+## Documentação da API (principais endpoints)
 
 A documentação interativa (OpenAPI/Swagger) é gerada automaticamente pelo back-end:
 
@@ -8,7 +8,7 @@ A documentação interativa (OpenAPI/Swagger) é gerada automaticamente pelo bac
 Todos os canais do estudo de caso (aplicativo, totem, balcão, pick-up) consomem esta mesma
 API, indicando o canal no campo `canal` do pedido.
 
-## Unidades e cardápio (RF01, RF05, RF19)
+### Unidades e cardápio (RF01, RF05, RF19)
 
 | Método | Rota | Descrição |
 |--------|------|-----------|
@@ -17,7 +17,7 @@ API, indicando o canal no campo `canal` do pedido.
 | POST | `/api/unidades` | Cadastra unidade (matriz) |
 | GET | `/api/unidades/{id}/cardapio` | Cardápio da unidade — só produtos disponíveis no local e no período (sazonalidade junina, variações regionais) |
 
-## Pedidos (RF02, RF03, RF04, RF07, RF12)
+### Pedidos (RF02, RF03, RF04, RF07, RF12)
 
 | Método | Rota | Descrição |
 |--------|------|-----------|
@@ -44,7 +44,7 @@ Ciclo de vida do pedido (INF01):
 `CRIADO → AGUARDANDO_PAGAMENTO → PAGO → EM_PREPARO → PRONTO → ENTREGUE`,
 com desvios `CANCELADO` e `PAGAMENTO_RECUSADO`.
 
-## Pagamentos (RF17, RF18)
+### Pagamentos (RF17, RF18)
 
 | Método | Rota | Descrição |
 |--------|------|-----------|
@@ -58,7 +58,7 @@ POST /api/pagamentos/1/resultado
 O sistema nunca recebe dados de cartão — apenas o resultado do processamento externo
 (estudo de caso, seção 5).
 
-## Clientes, fidelidade e LGPD (RF11–RF16)
+### Clientes, fidelidade e LGPD (RF11–RF16)
 
 | Método | Rota | Descrição |
 |--------|------|-----------|
@@ -72,14 +72,14 @@ Regras de fidelidade (INF03): 1 ponto por R$1 em pedidos confirmados; desconto p
 por faixa — 100+ pontos: 5%; 500+: 10%; 1000+: 15%. Pontos e desconto só se aplicam a
 clientes **com consentimento LGPD**.
 
-## Estoque (RF06, RF07)
+### Estoque (RF06, RF07)
 
 | Método | Rota | Descrição |
 |--------|------|-----------|
 | GET | `/api/estoque?unidadeId=` | Estoque local da unidade |
 | POST | `/api/estoque/{itemId}/ajuste` | Ajuste manual (operação sensível — auditada) |
 
-## Relatórios da matriz (RF08, RF09, RF10, RF20)
+### Relatórios da matriz (RF08, RF09, RF10, RF20)
 
 | Método | Rota | Descrição |
 |--------|------|-----------|
@@ -88,13 +88,13 @@ clientes **com consentimento LGPD**.
 | GET | `/api/relatorios/produtos-mais-consumidos` | Ranking de produtos |
 | GET | `/api/relatorios/indicadores/{unidadeId}` | Metas × vendas realizadas por unidade |
 
-## Auditoria (RF07, RF16)
+### Auditoria (RF07, RF16)
 
 | Método | Rota | Descrição |
 |--------|------|-----------|
 | GET | `/api/auditoria?tipo=` | Trilha de auditoria; filtro por tipo (`CANCELAMENTO`, `DESCONTO`, `AJUSTE_ESTOQUE`, `ACESSO_DADOS_PESSOAIS`, `ANONIMIZACAO`) |
 
-## Erros
+### Erros
 
 | HTTP | Situação |
 |------|----------|

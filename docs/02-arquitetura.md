@@ -1,6 +1,6 @@
-# Arquitetura Proposta — Rede "Raízes do Nordeste"
+## Arquitetura Proposta
 
-## Visão geral
+### Visão geral
 
 A solução é um **back-end único (API REST)** que atende todos os canais descritos no
 estudo de caso — aplicativo oficial, totens de autoatendimento, atendimento de balcão e
@@ -24,7 +24,7 @@ consomem as mesmas regras de negócio e os mesmos dados.
         relacional   (append-only)
 ```
 
-## Estilo arquitetural e decisões
+### Estilo arquitetural e decisões
 
 | Decisão | Justificativa (estudo de caso) |
 |---------|-------------------------------|
@@ -37,7 +37,7 @@ consomem as mesmas regras de negócio e os mesmos dados.
 | Dados de cartão nunca transitam pelo sistema | Seção 5: processamento é 100% externo — reduz risco e escopo de segurança. |
 | Perfis de acesso (CLIENTE, ATENDENTE, GERENTE, MATRIZ) | Seção 3 (equipes e matriz) + LGPD (seção 4): relatórios e auditoria restritos. |
 
-## Alta disponibilidade, escalabilidade e tolerância a falhas (seção 6)
+### Alta disponibilidade, escalabilidade e tolerância a falhas (seção 6)
 
 - **Stateless + réplicas atrás de load balancer**: qualquer instância atende qualquer
   requisição; picos de demanda são absorvidos adicionando réplicas (scale-out).
@@ -51,7 +51,7 @@ consomem as mesmas regras de negócio e os mesmos dados.
 - **Observabilidade**: logs estruturados + trilha de auditoria dão rastreabilidade
   (seção 3).
 
-## LGPD (seção 4)
+### LGPD (seção 4)
 
 - Consentimento explícito registrado com data/hora (opt-in) antes de qualquer uso para
   fidelidade/campanhas.
@@ -61,7 +61,7 @@ consomem as mesmas regras de negócio e os mesmos dados.
 - Minimização: armazenam-se apenas nome, e-mail e data de nascimento (necessários a
   fidelidade e campanhas por idade/perfil/frequência — seção 4).
 
-## Evolução
+### Evolução
 
 O crescimento da rede (seções 1 e 6) é suportado sem redesenho: novos canais consomem a
 mesma API; módulos podem ser extraídos para serviços independentes; o particionamento

@@ -58,7 +58,7 @@ mvn test
 
 ## Documentação
 
-Na pasta [docs](docs) estão os requisitos, a arquitetura, a documentação da API,
+Na pasta [documentacao](documentacao) estão os requisitos, a arquitetura, a documentação da API,
 o plano de testes e os diagramas (casos de uso, classes e DER).
 
 ## Autor

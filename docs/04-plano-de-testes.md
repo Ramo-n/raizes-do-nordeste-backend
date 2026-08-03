@@ -35,6 +35,29 @@ Execução automatizada: `cd backend && mvn test`.
 | CT14 | RF04 | Avançar status do pedido pago | PAGO → EM_PREPARO → PRONTO → ENTREGUE; transições inválidas retornam 422 | manual (Swagger) |
 | CT15 | RF08/RF09/RF10/RF20 | Consultar relatórios após pedidos confirmados | Vendas por unidade/região, ranking de produtos e indicador meta × realizado coerentes | manual (Swagger) |
 
+Os casos CT01–CT05, CT07, CT08 e CT11–CT15 são **positivos** (comportamento esperado) e
+CT06, CT09 e CT10 são **negativos** (erros e recusas tratados corretamente).
+
+## Exemplos detalhados (entrada, passos e saída esperada)
+
+**CT04 — positivo (confirmação de pagamento)**
+
+- Entrada: pedido nº 1 em `AGUARDANDO_PAGAMENTO`; corpo `{"referenciaExterna":"EXT-abc","status":"CONFIRMADO"}`
+- Passos: enviar `POST /api/pagamentos/1/resultado`; consultar `GET /api/pedidos/1` e `GET /api/unidades/1/estoque`
+- Saída esperada: pedido `PAGO`, estoque dos itens baixado, pontos do cliente acumulados
+
+**CT09 — negativo (produto fora do cardápio)**
+
+- Entrada: pedido na unidade 2 (SP) contendo produto exclusivo de Recife
+- Passos: enviar `POST /api/pedidos` com o item inválido
+- Saída esperada: HTTP 422 com mensagem de negócio; nenhum pedido criado
+
+**CT10 — negativo (estoque insuficiente)**
+
+- Entrada: pedido com quantidade maior que o estoque da unidade
+- Passos: enviar `POST /api/pedidos`
+- Saída esperada: HTTP 422 "Estoque insuficiente"; estoque inalterado
+
 ## Critérios de aceite
 
 - 100% dos testes automatizados passando (`mvn test`);

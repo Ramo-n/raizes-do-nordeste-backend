@@ -8,16 +8,14 @@ Todo o código-fonte, a documentação e os diagramas estão versionados em:
 
 ## Artefatos entregues
 
-| Artefato | Localização |
-|----------|-------------|
-| Código do back-end (Java 17 + Spring Boot 3) | `backend/src/main/java` |
-| Testes automatizados (12 testes, JUnit 5) | `backend/src/test/java` |
-| Massa de dados de exemplo | `backend/src/main/resources/data.sql` |
-| Levantamento de requisitos | `docs/01-requisitos.md` |
-| Arquitetura proposta | `docs/02-arquitetura.md` |
-| Documentação da API | `docs/03-api.md` |
-| Plano de testes | `docs/04-plano-de-testes.md` |
-| Diagramas (casos de uso, classes, DER) | `docs/diagramas/` |
+- Código do back-end (Java 17 + Spring Boot 3) — pasta `backend/src/main/java`
+- Testes automatizados (12 testes, JUnit 5) — pasta `backend/src/test/java`
+- Massa de dados de exemplo — arquivo `backend/src/main/resources/data.sql`
+- Levantamento de requisitos — `docs/01-requisitos.md`
+- Arquitetura proposta — `docs/02-arquitetura.md`
+- Documentação da API — `docs/03-api.md`
+- Plano de testes — `docs/04-plano-de-testes.md`
+- Diagramas (casos de uso, classes, DER) — pasta `docs/diagramas/`
 
 ## Como executar a demonstração
 

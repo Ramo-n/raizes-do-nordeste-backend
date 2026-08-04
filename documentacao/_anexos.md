@@ -1,14 +1,15 @@
 # Anexos — Evidências de Execução
 
-## Testes automatizados (mvn test)
+## Aplicação em execução
 
-Execução dos 12 testes automatizados do projeto, todos passando:
+Terminal com a API iniciada pelo comando `mvn spring-boot:run` (mensagem
+"Started RaizesApplication" e Tomcat na porta 8080):
 
-![Resultado do mvn test](evidencias/testes-mvn.png)
+![Aplicação em execução](evidencias/execucao-api.png)
 
 ## Swagger UI
 
-API em execução local (`mvn spring-boot:run`), com a documentação interativa disponível em
+Com a API rodando, a documentação interativa fica disponível em
 `http://localhost:8080/swagger-ui.html`:
 
 ![Swagger UI](evidencias/swagger.png)

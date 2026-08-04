@@ -7,22 +7,10 @@ estudo de caso — aplicativo oficial, totens de autoatendimento, atendimento de
 pick-up (seção 2). Assim, todos os canais usam as mesmas regras de negócio e os mesmos
 dados, e o cliente tem a mesma experiência em qualquer um deles.
 
-```
- App oficial   Totem   Balcão/PDV   Pick-up
-      \          |         |          /
-       \         |         |         /
-        +----------------------------+
-        |      API REST (HTTPS)      |
-        |  Spring Boot — camadas:    |
-        |  Controller → Service →    |
-        |  Repository (JPA)          |
-        +----------------------------+
-           |            |         \
-           |            |          \-> Serviço externo de
-        Banco de     Registros         pagamento (seção 5)
-        dados        de auditoria
-        relacional
-```
+Os quatro canais (aplicativo, totem, balcão e pick-up) fazem requisições à mesma API,
+que é organizada em três camadas (Controller, Service e Repository) e usa um banco de
+dados relacional. A API também se comunica com o serviço externo de pagamento (seção 5)
+e grava os registros de auditoria no banco.
 
 ### Decisões e justificativas
 

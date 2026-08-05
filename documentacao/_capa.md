@@ -1,23 +1,45 @@
 ---
-title: "Rede \"Raízes do Nordeste\" — Sistema de Pedidos Multicanal"
-subtitle: "Projeto Multidisciplinar — Trilha Back-end"
-author: "Ramon De Oliveira"
-date: ""
 geometry: margin=2.5cm
 lang: pt-BR
 header-includes:
   - \usepackage{float}
   - \floatplacement{figure}{H}
   - \usepackage{graphicx}
-  - \renewcommand{\maketitle}{\begin{center}\includegraphics[width=9cm]{logo-uninter.jpg}\\[4em]{\LARGE\bfseries Rede ``Raízes do Nordeste'' --- Sistema de Pedidos Multicanal}\\[1.5em]{\large Projeto Multidisciplinar --- Trilha Back-end}\\[2em]{\large Ramon De Oliveira}\end{center}\vspace{2em}}
 ---
 
-**Curso:** CST em Análise e Desenvolvimento de Sistemas
+\begin{titlepage}
+\begin{center}
+\includegraphics[width=9cm]{logo-uninter.jpg}
 
-**Disciplina:** Projeto Multidisciplinar
+\vspace{1cm}
 
-**Aluno:** Ramon De Oliveira
+{\large CST em Análise e Desenvolvimento de Sistemas}
 
-**RU:** 4904087
+\vfill
 
+{\LARGE\bfseries Rede ``Raízes do Nordeste''}
+
+\vspace{0.5cm}
+
+{\Large\bfseries Sistema de Pedidos Multicanal}
+
+\vspace{1cm}
+
+{\large Projeto Multidisciplinar --- Trilha Back-end}
+
+\vfill
+
+{\large Ramon De Oliveira}
+
+{\large RU: 4904087}
+
+\vspace{2cm}
+
+{\large 2026}
+\end{center}
+\end{titlepage}
+
+\renewcommand{\contentsname}{Sumário}
+\setcounter{tocdepth}{1}
+\tableofcontents
 \newpage
